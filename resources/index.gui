@@ -1,0 +1,97 @@
+<svg id="page">
+   
+  <image href="images/background.png" x="0" y="0" width="100%" height="100%" class="background" />
+  
+  <image id="month" href="fonts/rgb/white/month/jan.png" x="53" y="1" width="70" height="40" />
+  <image id="date1" href="fonts/rgb/white/digits/1.png" x="125" y="6" width="20" height="28" />
+  <image id="date2" href="fonts/rgb/white/digits/1.png" x="145" y="6" width="20" height="28" />
+  
+  <image id="day" href="fonts/rgb/white/day_of_the_week/mon.png" x="190" y="1" width="75" height="40" />
+  
+  <image id="weather" href="images/weather/clean_sky_day.png" x="0" y="40" width="200" height="125" />
+  
+  <svg>
+    <image id="minus" href="fonts/rgb/white/minus.png" x="190" y="57" width="20" height="40" class="hide" />
+    <image id="temp1" href="fonts/rgb/white/digits/0.png" x="190" y="62" width="20" height="28" />
+    <image id="temp2" href="fonts/rgb/white/digits/0.png" x="190" y="62" width="20" height="28" class="hide" />
+    <image id="temp3" href="fonts/rgb/white/digits/0.png" x="190" y="62" width="20" height="28" class="hide" />
+    <image id="degree" href="fonts/rgb/white/degree.png" x="210" y="57" width="20" height="40" />
+    <image id="scale" href="fonts/rgb/white/c.png" x="230" y="57" width="20" height="40" />
+  </svg>
+  
+  <svg>
+    <image id="humidity" href="fonts/rgb/white/humidity.png" x="190" y="97" width="20" height="40" />
+    <image id="humidity1" href="fonts/rgb/white/digits/0.png" x="210" y="105" width="20" height="28" />
+    <image id="humidity2" href="fonts/rgb/white/digits/0.png" x="210" y="105" width="20" height="28" class="hide" />
+    <image id="humidity3" href="fonts/rgb/white/digits/0.png" x="210" y="105" width="20" height="28" class="hide" />
+    <image id="percentage" href="fonts/rgb/white/percentage.png" x="230" y="97" width="20" height="40" />
+  </svg>
+  
+  <svg> 
+    <image id="separator" href="fonts/rgb/white/separator.png" x="136" y="170" width="28" height="74" />
+    
+    <image id="hours1" href="fonts/rgb/white/digits/0.png" x="28" y="170" width="54" height="74" />
+    <image id="hours2" href="fonts/rgb/white/digits/0.png" x="82" y="170" width="54" height="74" />
+    <image id="mins1" href="fonts/rgb/white/digits/0.png" x="164" y="170" width="54" height="74" />
+    <image id="mins2" href="fonts/rgb/white/digits/0.png" x="218" y="170" width="54" height="74" />
+  </svg>
+  
+  <svg x="30" y="260" width="240" height="48">
+    <use id="iconHRM" href="#heart-beat" y="2" width="24" height="24" fill="#FF214A" />
+    <image id="hrm1" href="fonts/rgb/white/minus.png" x="28" width="18" height="26" />
+    <image id="hrm2" href="fonts/rgb/white/minus.png" x="46" width="18" height="26" />
+    <image id="hrm3" href="fonts/rgb/white/minus.png" x="64" width="18" height="26" class="hide" />
+    
+    <use id="stats-cycle" href="#cycleview" x="82" width="158">
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/steps.png" class="image" x="30" fill="#008753" />
+        <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="130" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/calories.png" class="image" x="30" fill="#FF8200" />
+        <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="130" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/distance.png" class="image" x="30" fill="#DD4433" />
+        <image id="distance_int1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image id="distance_int2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image id="distance_int3" href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image id="distance_dot" href="fonts/rgb/white/dot.png" x="76" y="5" width="6" height="26" />
+        <image id="distance_float1" href="fonts/rgb/white/digits/0.png" x="82" width="18" height="26" />
+        <image id="distance_float2" href="fonts/rgb/white/digits/0.png" x="100" width="18" height="26" />
+        <image id="distance_unit" href="fonts/rgb/white/km.png" x="118" y="5" width="30" height="26" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/floors.png" class="image" x="30" fill="#00879B" />
+        <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/active_minutes.png" class="image" x="30" fill="#FFB400" />
+        <image id="activity_h1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" class="hide" />
+        <image id="activity_h2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image id="activity_h" href="fonts/rgb/white/h.png" x="94" y="5" width="13" height="26" class="hide" />
+        <image id="activity_m1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image id="activity_m2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" />
+        <image id="activity_m" href="fonts/rgb/white/m.png" x="94" y="5" width="20" height="26" />
+      </use>
+    </use>
+</svg>
+  
+</svg>
