@@ -24,6 +24,9 @@ settingsStorage.onchange = function(evt) {
       data["values"][0].value.key = "theme";
       messaging.peerSocket.send(data["values"][0].value);
     }
+    else if (evt.key === "battery_show") {
+      messaging.peerSocket.send({key: "battery_show", value: evt.newValue});
+    }
   }
 }
 

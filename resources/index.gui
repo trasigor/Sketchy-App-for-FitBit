@@ -2,6 +2,9 @@
    
   <image href="images/background.png" x="0" y="0" width="100%" height="100%" class="background" />
   
+  <image id="battery-body" href="images/battery.png" x="10" y="10" width="31" height="18" fill="#FFFFFF" class="hide" />
+  <rect id="battery-fill" x="13" y="13" width="0" height="12" fill="#FFFFFF" class="hide" />
+  
   <image id="month" href="fonts/rgb/white/month/jan.png" x="53" y="1" width="70" height="40" />
   <image id="date1" href="fonts/rgb/white/digits/1.png" x="125" y="6" width="20" height="28" />
   <image id="date2" href="fonts/rgb/white/digits/1.png" x="145" y="6" width="20" height="28" />

@@ -93,6 +93,7 @@ function mySettings(props) {
       <Select
         label="Theme"
         settingsKey="theme"
+        title={<Text bold align="center">Theme</Text>}
         options={[
            {
              name: "Black and White",
@@ -114,6 +115,7 @@ function mySettings(props) {
         id="weather_provider"
         label="Weather Provider"
         settingsKey="weather_provider"
+        title={<Text bold align="center">Weather Provider</Text>}
         options={[
            {
              name: "OpenWeatherMap",
@@ -129,6 +131,7 @@ function mySettings(props) {
       <Select
         label="Temperature Scale"
         settingsKey="temperature_scale"
+        title={<Text bold align="center">Temperature Scale</Text>}
         options={[
            {
              name: "Metric",
@@ -159,12 +162,27 @@ function mySettings(props) {
         />
       </Section>
       
+      <Section
+        title={<Text bold align="center">Battery Charge</Text>}
+      >
+        <Toggle
+          label="Always Show Battery Charge"
+          settingsKey="battery_show"
+        />
+      </Section>
       
       <Section
         title={<Text bold align="center">Contact Me</Text>}>
         <Text>
           Please don't hesitate to contact me with any questions or suggestions. This app will always be free. If you really like my app please consider buying me a coffee. Thanks!
         </Text>
+        <Link source="https://t.me/fitbit_sketchy">
+          <TextImageRow
+            label="Telegram"
+            sublabel="support chat"
+            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Telegram.png?raw=true"
+          />
+        </Link>
         <Link source="https://rawgit.com/trasigor/Sketchy-App-for-FitBit/master/settings/email.html">
           <TextImageRow
             label="Email"

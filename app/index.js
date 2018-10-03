@@ -3,11 +3,11 @@ import clock from "clock";
 import document from "document";
 import * as fs from "fs";
 import * as messaging from "messaging";
-import { preferences } from "user-settings";
-import { units } from "user-settings";
-import { today } from "user-activity";
+import { preferences, units } from "user-settings";
 import * as util from "../common/utils";
 import * as HRM from "./hrm";
+import * as activity from "./activity";
+import { battery, charger } from "power";
 
 const SETTINGS_TYPE = "cbor";
 const SETTINGS_FILE = "settings.cbor";
@@ -83,6 +83,9 @@ let activity_m_digits = [
 ];
 let activity_m = document.getElementById("activity_m");
 
+let battery_body = document.getElementById("battery-body");
+let battery_fill = document.getElementById("battery-fill");
+
 let settings = loadSettings();
 if (undefined === settings.background || undefined === settings.foreground) {
   settings.background = "black";
@@ -122,18 +125,6 @@ clock.ontick = evt => {
   if (d.getTime() > lastWeatherUpdate+1800000 && messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     messaging.peerSocket.send("updateWeather");
     lastWeatherUpdate = d.getTime();
-  }
-  
-  if (me.permissions.granted("access_activity")) {
-    activityCallback({
-      steps: (today.adjusted.steps || 0),
-      calories: (today.adjusted.calories || 0),
-      distance: (today.adjusted.distance || 0),
-      elevationGain: (today.adjusted.elevationGain || 0),
-      activeMinutes: (today.adjusted.activeMinutes || 0)
-    });
-  } else {
-    console.log("Denied User Activity permission");
   }
 }
 
@@ -180,6 +171,8 @@ function applyTheme(background, foreground) {
   if (undefined !== settings.weather) {
     updateWeather(settings.weather);
   }
+  
+  battery_body.style.fill = foreground;
   /////////////////////
 }
 
@@ -359,7 +352,38 @@ function activityCallback(data) {
     }
   });
 }
+
+activity.initialize(activityCallback);
 /* -------------------------- */
+
+/* ------- BATTERY --------- */
+function batteryUpdate () {
+  if (settings.battery_show && !charger.connected) {
+    let chargeLevel = Math.ceil(battery.chargeLevel/5);
+    let color = "#00a629";
+    if (chargeLevel <= 8) {
+      color = "#fc6b3a";
+    }
+    if (chargeLevel <= 4) {
+      color = "#f83c40";
+    }
+
+    battery_fill.style.fill = color;
+    battery_fill.width = chargeLevel;
+    battery_fill.style.display = "inline";
+    battery_body.style.display = "inline";
+  }
+  
+  if (settings.battery_show && 8 >= battery.chargeLevel || !settings.battery_show || charger.connected) {
+    battery_body.style.display = "none";
+    battery_fill.style.display = "none";
+  }
+}
+
+batteryUpdate();
+battery.onchange = function(){batteryUpdate()};
+charger.onchange = function(){batteryUpdate()};
+/* ------------------------- */
 
 // Listen for the onmessage event
 messaging.peerSocket.onmessage = evt => {
@@ -376,6 +400,10 @@ messaging.peerSocket.onmessage = evt => {
   }
   else if ("theme" === evt.data.key) {
     applyTheme(evt.data.background, evt.data.foreground);
+  }
+  else if ("battery_show" === evt.data.key) {
+    settings.battery_show = (0 === evt.data.value.localeCompare("true")) ? true : false;
+    batteryUpdate();
   }
   else {
     console.log("else message");
