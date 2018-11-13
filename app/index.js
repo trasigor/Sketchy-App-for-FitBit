@@ -188,6 +188,9 @@ function updateWeather(data) {
     temp_position += temp_indent;
     data.temperature *= -1;
   }
+  else {
+    minus.style.display = "none";
+  }
 
   temp_position = util.showNumber(data.temperature, temp, temp_position, temp_indent, settings.foreground);
 
