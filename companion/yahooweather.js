@@ -18,42 +18,34 @@ function getWeather(pos) {
   let location = '';
   let locationFound = JSON.parse(settingsStorage.getItem("location_found"));
   if (locationFound && locationFound.name) {
-    location = JSON.parse(settingsStorage.getItem("custom_location")).name;
+    location = 'location='+encodeURIComponent(JSON.parse(settingsStorage.getItem("custom_location")).name);
   }
   else {
-    location = '('+pos.latitude+','+pos.longitude+')';
+    location = 'lat='+pos.latitude+'&lon='+pos.longitude;
   }
   
   // Construct URL
-  let url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' +
-            encodeURIComponent('select item.condition, atmosphere from weather.forecast ') +
-            encodeURIComponent('where woeid in (select woeid from geo.places(1) where text="'+location+'") and u="'+scale+'"');
+  let url = 'https://pebble.itigor.com/sketchy-weather/yahooweather.php?action=weather&format=json&' + location + '&u='+scale;
   
   return new Promise(function(resolve, reject) {
     // Send request to YahooWeather
     fetch(url).then(function(response) {
       return response.json();
     }).then(function(json) {
-        if (
-          typeof json.query !== 'object' ||
-          0 === json.query.count ||
-          typeof json.query.results.channel === null ||
-          typeof json.query.results.channel !== 'object' ||
-          3200 == json.query.results.channel.item.condition.code
-        ) {
+      if (typeof json !== 'object' || json.results === false || 3200 == json.condition_code) {
         // temporary blocked due to exceeding of requests limitation
         console.log(new Date() + " - Incorrect response from weather server.");
         resolve({key: "weather", error: "-", message: "Incorrect response from weather server."});
       }
       else {
         // Conditions
-        let weather_image = getWeatherImage(json.query.results.channel.item.condition.code);
+        let weather_image = getWeatherImage(json.condition_code);
 
         // Assemble dictionary using our keys
         let dictionary = {
           "key": "weather",
-          "temperature": Math.round(json.query.results.channel.item.condition.temp),
-          "humidity": Math.round(json.query.results.channel.atmosphere.humidity),
+          "temperature": Math.round(json.temperature),
+          "humidity": Math.round(json.humidity),
           "scale": scale,
           "weather_image": weather_image
         };

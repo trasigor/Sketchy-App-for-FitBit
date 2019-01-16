@@ -31,8 +31,7 @@ function checkLocation(location, weather_provider, props) {
 function locationFromYahooWeather(location) {
   return new Promise(function(resolve, reject) {
       
-    let url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' +
-        encodeURIComponent('select * from geo.places(1) where text="' + location + '"');
+    let url = 'https://pebble.itigor.com/sketchy-weather/yahooweather.php?format=json&action=location&location=' + encodeURIComponent(location);
 
     // Send request to YahooWeather
     fetch(url).then(function(response) {
@@ -40,19 +39,8 @@ function locationFromYahooWeather(location) {
     }).then(function(json) {
       let locationFound = '';
       
-      if (null !== json.query.results) {
-        if (json.query.results.place.country) {
-          locationFound += json.query.results.place.country.content;
-        }
-        if (json.query.results.place.admin1) {
-          locationFound += ", " + json.query.results.place.admin1.content;
-        }
-        if (json.query.results.place.admin2) {
-          locationFound += ", " + json.query.results.place.admin2.content;
-        }
-        if (json.query.results.place.locality1) {
-          locationFound += ", " + json.query.results.place.locality1.content;
-        }
+      if (json.location) {
+        locationFound += json.location;
       }
       
       resolve(locationFound);
@@ -176,13 +164,6 @@ function mySettings(props) {
         <Text>
           Please don't hesitate to contact me with any questions or suggestions. This app will always be free. If you really like my app please consider buying me a coffee. Thanks!
         </Text>
-        <Link source="https://t.me/fitbit_sketchy">
-          <TextImageRow
-            label="Telegram"
-            sublabel="support chat"
-            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Telegram.png?raw=true"
-          />
-        </Link>
         <Link source="https://rawgit.com/trasigor/Sketchy-App-for-FitBit/master/settings/email.html">
           <TextImageRow
             label="Email"
