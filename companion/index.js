@@ -93,16 +93,9 @@ function getWeather() {
 
 function getWeatherData(coords) {
   let weather_provider = JSON.parse(settingsStorage.getItem("weather_provider"));
-  if (weather_provider && weather_provider.values[0].value) {
-    if (!weather_provider.values[0].value.localeCompare("yahooweather")) {
-      let weatherAPI = new YahooWeatherAPI();
-    }
-    else {
-      let weatherAPI = new OpenWeatherMapAPI();
-    }
-  }
-  else {
-    let weatherAPI = new OpenWeatherMapAPI();
+  let weatherAPI = new OpenWeatherMapAPI();
+  if (weather_provider && weather_provider.values[0].value && !weather_provider.values[0].value.localeCompare("yahooweather")) {
+    weatherAPI = new YahooWeatherAPI();
   }
 
   weatherAPI.getData(coords).then(function(dictionary) {

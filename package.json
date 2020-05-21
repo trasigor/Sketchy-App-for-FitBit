@@ -9,15 +9,22 @@
       "access_location",
       "access_heart_rate",
       "access_activity",
-      "access_user_profile"
+      "access_user_profile",
+      "run_background"
     ],
     "buildTargets": [
-      "meson"
+      "meson",
+      "mira",
+      "gemini"
     ],
     "i18n": {
       "en": {
         "name": "Sketchy"
       }
-    }
+    },
+    "defaultLanguage": "en-US"
+  },
+  "devDependencies": {
+    "@fitbit/sdk": "~4.1.0"
   }
 }

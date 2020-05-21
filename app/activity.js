@@ -1,4 +1,5 @@
-import { me } from "appbit";
+import { me as appbit } from "appbit";
+import { me as device } from "device";
 import { display } from "display";
 import { today } from "user-activity";
 
@@ -7,30 +8,48 @@ let lastReading = 0;
 let heartRate;
 
 export function initialize(callback) {
-  if (me.permissions.granted("access_activity")) {
+  if (appbit.permissions.granted("access_activity")) {
     activityCallback = callback;
     setupEvents();
     start();
   } else {
     console.log("Denied User Activity permission");
-    activityCallback({
-      steps: 0,
-      calories: 0,
-      distance: 0,
-      elevationGain: 0,
-      activeMinutes: 0
-    });
+    if (-1 !== device.modelName.indexOf("Versa Lite")) {
+      activityCallback({
+        steps: 0,
+        calories: 0,
+        distance: 0,
+        activeMinutes: 0
+      });
+    } else {
+      activityCallback({
+        steps: 0,
+        calories: 0,
+        distance: 0,
+        elevationGain: 0,
+        activeMinutes: 0
+      });
+    }
   }
 }
 
 function getReading() {
-  activityCallback({
-    steps: (today.adjusted.steps || 0),
-    calories: (today.adjusted.calories || 0),
-    distance: (today.adjusted.distance || 0),
-    elevationGain: (today.adjusted.elevationGain || 0),
-    activeMinutes: (today.adjusted.activeMinutes || 0)
-  });
+  if (-1 !== device.modelName.indexOf("Versa Lite")) {
+    activityCallback({
+      steps: (today.adjusted.steps || 0),
+      calories: (today.adjusted.calories || 0),
+      distance: (today.adjusted.distance || 0),
+      activeMinutes: (today.adjusted.activeMinutes || 0)
+    });
+  } else {
+    activityCallback({
+      steps: (today.adjusted.steps || 0),
+      calories: (today.adjusted.calories || 0),
+      distance: (today.adjusted.distance || 0),
+      elevationGain: (today.adjusted.elevationGain || 0),
+      activeMinutes: (today.adjusted.activeMinutes || 0)
+    });
+  }
 }
 
 function setupEvents() {

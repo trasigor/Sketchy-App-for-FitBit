@@ -1,4 +1,5 @@
-import { me } from "appbit";
+import { me as appbit } from "appbit";
+import { me as device } from "device";
 import clock from "clock";
 import document from "document";
 import * as fs from "fs";
@@ -58,33 +59,47 @@ let hrm = [
 ];
 
 let statsCycle = document.getElementById("stats-cycle");
+if (-1 !== device.modelName.indexOf("Versa Lite")) {
+  statsCycle = document.getElementById("stats-cycle-VersaLite");
+}
 let statsCycleItems = statsCycle.getElementsByClassName("cycle-item");
 
 let distance_int_part = [
-  document.getElementById("distance_int1"),
-  document.getElementById("distance_int2"),
-  document.getElementById("distance_int3"),
+  statsCycle.getElementById("distance_int1"),
+  statsCycle.getElementById("distance_int2"),
+  statsCycle.getElementById("distance_int3"),
 ];
 let distance_float_part = [
-  document.getElementById("distance_float1"),
-  document.getElementById("distance_float2"),
+  statsCycle.getElementById("distance_float1"),
+  statsCycle.getElementById("distance_float2"),
 ];
-let distance_dot = document.getElementById("distance_dot");
-let distance_unit = document.getElementById("distance_unit");
+let distance_dot = statsCycle.getElementById("distance_dot");
+let distance_unit = statsCycle.getElementById("distance_unit");
 
 let activity_h_digits = [
-  document.getElementById("activity_h1"),
-  document.getElementById("activity_h2"),
+  statsCycle.getElementById("activity_h1"),
+  statsCycle.getElementById("activity_h2"),
 ];
-let activity_h = document.getElementById("activity_h");
+let activity_h = statsCycle.getElementById("activity_h");
 let activity_m_digits = [
-  document.getElementById("activity_m1"),
-  document.getElementById("activity_m2"),
+  statsCycle.getElementById("activity_m1"),
+  statsCycle.getElementById("activity_m2"),
 ];
-let activity_m = document.getElementById("activity_m");
+let activity_m = statsCycle.getElementById("activity_m");
 
 let battery_body = document.getElementById("battery-body");
 let battery_fill = document.getElementById("battery-fill");
+
+if (-1 !== device.modelName.indexOf("Versa Lite")) {
+  document.getElementsByClassName("hideOnVersaLite").forEach((item, index) => {
+    item.class = "hide";
+  });
+}
+else {
+  document.getElementsByClassName("showOnVersaLite").forEach((item, index) => {
+    item.class = "hide";
+  });
+}
 
 let settings = loadSettings();
 if (undefined === settings.background || undefined === settings.foreground) {
@@ -301,16 +316,16 @@ function activityCallback(data) {
     let position = start_position;
     
     img.x = position - 28;
-      
-    if (0 == index || 1 == index || 3 == index) {
+    
+    if (-1 !== item.class.indexOf("steps") || -1 !== item.class.indexOf("calories") || -1 !== item.class.indexOf("floors")) {
       do {
         numberArr.push(digit);
       } while(digit = digit.nextSibling);
       
       util.showNumber(data[Object.keys(data)[index]], numberArr, position, indent, settings.foreground);
     }
-    else if (2 == index) {
-      let val = data[Object.keys(data)[index]];
+    else if (-1 !== item.class.indexOf("distance")) {
+      let val = data["distance"];
       let u = "km";
       if(units.distance === "us") {
         val *= 0.621371;
@@ -334,9 +349,9 @@ function activityCallback(data) {
       distance_unit.x = position;
       distance_unit.image = `fonts/rgb/${settings.foreground}/${u}.png`;
     }
-    else if (4 == index) {
-      let hours = Math.floor(data[Object.keys(data)[index]]/60);
-      let minutes = data[Object.keys(data)[index]]%60;
+    else if (-1 !== item.class.indexOf("active-minutes")) {
+      let hours = Math.floor(data["activeMinutes"]/60);
+      let minutes = data["activeMinutes"]%60;
       
       if (hours <= 0) {
         activity_h_digits[0].style.display = "none";
@@ -415,7 +430,7 @@ messaging.peerSocket.onmessage = evt => {
 }
 
 // Register for the unload event
-me.onunload = saveSettings;
+appbit.onunload = saveSettings;
 
 function loadSettings() {
   try {

@@ -84,14 +84,14 @@ function mySettings(props) {
         title={<Text bold align="center">Theme</Text>}
         options={[
            {
-             name: "Black and White",
+             name: "Black on White",
              value: {
                background: "white",
                foreground: "black"
              }
            },
            {
-             name: "White and Black",
+             name: "White on Black",
              value: {
                background: "black",
                foreground: "white"

@@ -45,8 +45,8 @@
     <image id="hrm2" href="fonts/rgb/white/minus.png" x="46" width="18" height="26" />
     <image id="hrm3" href="fonts/rgb/white/minus.png" x="64" width="18" height="26" class="hide" />
     
-    <use id="stats-cycle" href="#cycleview" x="82" width="158">
-      <use href="#cycleview-item" class="cycle-item">
+    <use id="stats-cycle" href="#cycleview" x="82" width="158" class="hideOnVersaLite">
+      <use href="#cycleview-item" class="cycle-item steps">
         <image href="images/steps.png" class="image" x="30" fill="#008753" />
         <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
         <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
@@ -56,7 +56,7 @@
         <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
       </use>
       
-      <use href="#cycleview-item" class="cycle-item">
+      <use href="#cycleview-item" class="cycle-item calories">
         <image href="images/calories.png" class="image" x="30" fill="#FF8200" />
         <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
         <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
@@ -66,7 +66,7 @@
         <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
       </use>
       
-      <use href="#cycleview-item" class="cycle-item">
+      <use href="#cycleview-item" class="cycle-item distance">
         <image href="images/distance.png" class="image" x="30" fill="#DD4433" />
         <image id="distance_int1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
         <image id="distance_int2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
@@ -77,7 +77,7 @@
         <image id="distance_unit" href="fonts/rgb/white/km.png" x="118" y="5" width="30" height="26" />
       </use>
       
-      <use href="#cycleview-item" class="cycle-item">
+      <use href="#cycleview-item" class="cycle-item floors">
         <image href="images/floors.png" class="image" x="30" fill="#00879B" />
         <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
         <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
@@ -85,7 +85,50 @@
         <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
       </use>
       
-      <use href="#cycleview-item" class="cycle-item">
+      <use href="#cycleview-item" class="cycle-item active-minutes">
+        <image href="images/active_minutes.png" class="image" x="30" fill="#FFB400" />
+        <image id="activity_h1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" class="hide" />
+        <image id="activity_h2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image id="activity_h" href="fonts/rgb/white/h.png" x="94" y="5" width="13" height="26" class="hide" />
+        <image id="activity_m1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image id="activity_m2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" />
+        <image id="activity_m" href="fonts/rgb/white/m.png" x="94" y="5" width="20" height="26" />
+      </use>
+    </use>
+    
+    <use id="stats-cycle-VersaLite" href="#cycleview" x="82" width="158" class="showOnVersaLite">
+      <use href="#cycleview-item" class="cycle-item steps">
+        <image href="images/steps.png" class="image" x="30" fill="#008753" />
+        <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="130" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item calories">
+        <image href="images/calories.png" class="image" x="30" fill="#FF8200" />
+        <image href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="112" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="130" width="18" height="26" class="hide" />
+        <image href="fonts/rgb/white/digits/0.png" x="148" width="18" height="26" class="hide" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item distance">
+        <image href="images/distance.png" class="image" x="30" fill="#DD4433" />
+        <image id="distance_int1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" />
+        <image id="distance_int2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
+        <image id="distance_int3" href="fonts/rgb/white/digits/0.png" x="94" width="18" height="26" class="hide" />
+        <image id="distance_dot" href="fonts/rgb/white/dot.png" x="76" y="5" width="6" height="26" />
+        <image id="distance_float1" href="fonts/rgb/white/digits/0.png" x="82" width="18" height="26" />
+        <image id="distance_float2" href="fonts/rgb/white/digits/0.png" x="100" width="18" height="26" />
+        <image id="distance_unit" href="fonts/rgb/white/km.png" x="118" y="5" width="30" height="26" />
+      </use>
+      
+      <use href="#cycleview-item" class="cycle-item active-minutes">
         <image href="images/active_minutes.png" class="image" x="30" fill="#FFB400" />
         <image id="activity_h1" href="fonts/rgb/white/digits/0.png" x="58" width="18" height="26" class="hide" />
         <image id="activity_h2" href="fonts/rgb/white/digits/0.png" x="76" width="18" height="26" class="hide" />
