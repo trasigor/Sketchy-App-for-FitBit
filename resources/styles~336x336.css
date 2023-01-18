@@ -1,0 +1,13 @@
+.hide {
+  display: none;
+}
+
+.cycle-item .image {
+  width: 24;
+  height: 24;
+}
+
+#container {
+  x: 18;
+  y: 18;
+}

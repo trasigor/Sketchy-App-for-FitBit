@@ -1,24 +1,36 @@
-function checkLocation(location, weather_provider, props) {
+import { getWeatherProviders } from "./getWeatherProviders.js"
+import { getLocation } from "./getLocation.js"
+import { getOpenWeatherMapLocation } from "./getOpenWeatherMapLocation.js"
+
+let weatherProviders = [];
+let selectedWeatherProvider = false;
+
+function checkLocation(location, weatherProvider, apiKey, props) {
   if (!location && 'undefined' !== typeof props.settings.custom_location) {
     location = JSON.parse(props.settings.custom_location);
   }
   
   if (location && '' !== location.name) {
-    if (!weather_provider && props.settings.weather_provider) {
-      weather_provider = JSON.parse(props.settings.weather_provider)
+    if (!weatherProvider) {
+      if (props.settings.weather_provider) {
+        weatherProvider = JSON.parse(props.settings.weather_provider);
+      }
+      else {
+        weatherProvider = {"values":[weatherProviders[0]],"selected":[0]};
+      }
+    }
+    
+    if (!apiKey && props.settings.api_key_openweathermap) {
+      apiKey = JSON.parse(props.settings.api_key_openweathermap);
     }
 
-    if (
-        weather_provider && weather_provider.values && typeof weather_provider.values[0] === 'object' &&
-        weather_provider.values[0].value &&
-        !weather_provider.values[0].value.localeCompare("yahooweather")
-    ) {
-      locationFromYahooWeather(location.name).then(function(locationFound) {
+    if (isWeatherProviderSelected(weatherProvider, "OpenWeatherMap") && apiKey && apiKey.name) {
+      getOpenWeatherMapLocation(location.name, apiKey.name).then(function(locationFound) {
         props.settingsStorage.setItem('location_found', JSON.stringify({name: locationFound}));
       });
     }
     else {
-      locationFromOpenWeatherMap(location.name, props.settings.openweathermap_api_key).then(function(locationFound) {
+      getLocation(location.name, weatherProvider.values[0].value).then(function(locationFound) {
         props.settingsStorage.setItem('location_found', JSON.stringify({name: locationFound}));
       });
     }
@@ -28,173 +40,211 @@ function checkLocation(location, weather_provider, props) {
   }
 }
 
-function locationFromYahooWeather(location) {
-  return new Promise(function(resolve, reject) {
-      
-    let url = 'https://pebble.itigor.com/sketchy-weather/yahooweather.php?format=json&action=location&location=' + encodeURIComponent(location);
-
-    // Send request to YahooWeather
-    fetch(url).then(function(response) {
-      return response.json();
-    }).then(function(json) {
-      let locationFound = '';
-      
-      if (json.location) {
-        locationFound += json.location;
-      }
-      
-      resolve(locationFound);
-    }).catch(function(error) {
-      reject(error);
-    });
-  });
+function isWeatherProviderSelected(weatherProviderData, weatherProviderName) {
+  return weatherProviderData && weatherProviderData.values && typeof weatherProviderData.values[0] === 'object' &&
+    weatherProviderData.values[0].value && !weatherProviderData.values[0].value.localeCompare(weatherProviderName);
 }
 
-function locationFromOpenWeatherMap(location, apiKey) {
-  return new Promise(function(resolve, reject) {
-    let url = "https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(location) +
-              '&APPID=' + apiKey;
+function settings(props) {
+  if (false === selectedWeatherProvider) {
+    selectedWeatherProvider = props.settingsStorage.getItem('weather_provider');
+    if ('undefined' === typeof selectedWeatherProvider) {
+      // ? reset selection
+    }
+    else {
+      selectedWeatherProvider = JSON.parse(selectedWeatherProvider);
 
-    // Send request to OpenWeatherMap
-    fetch(url).then(function(response) {
-      return response.json();
-    }).then(function(json) {
-      let locationFound = '';
+      if (!weatherProviders.map(provider => provider.value).includes(selectedWeatherProvider.values[0].value)) {
+        selectedWeatherProvider = {"values":[weatherProviders[0]],"selected":[0]};
+        props.settingsStorage.setItem("weather_provider", JSON.stringify(selectedWeatherProvider));
+        props.settings.weather_provider = selectedWeatherProvider;
+      }
+      else {
+        let mappedWeatherProviders = Object.fromEntries(
+          weatherProviders.map(
+            function (provider, index) {
+              return [provider.value, index];
+            }
+          )
+        );
 
-      if (parseInt(json.cod) !== 404) {
-        if (json.sys.country) {
-            locationFound += json.sys.country;
+        if (mappedWeatherProviders[selectedWeatherProvider.selected[0]] !== selectedWeatherProvider.values[0].value) {
+          selectedWeatherProvider.selected = [mappedWeatherProviders[selectedWeatherProvider.values[0].value]];
+          props.settingsStorage.setItem('weather_provider', JSON.stringify(selectedWeatherProvider));
+          props.settings.weather_provider = selectedWeatherProvider;
         }
-        locationFound += ((locationFound && json.name) ? ", " : "") + json.name;
+        selectedWeatherProvider = JSON.stringify(selectedWeatherProvider);
       }
+    }
+  }
 
-      resolve(locationFound);
-    }).catch(function(error) {
-      reject(error);
-    });
-  });
+  return getSettingsPage(props);
 }
 
-function mySettings(props) {
+function getSettingsPage(props) {
+  let openWeatherMapApiKeySection = () => {};
+  if (props.settings.weather_provider && (
+    'string' === typeof props.settings.weather_provider
+    && isWeatherProviderSelected(JSON.parse(props.settings.weather_provider), "OpenWeatherMap")
+    || 'object' === typeof props.settings.weather_provider
+    && isWeatherProviderSelected(props.settings.weather_provider, "OpenWeatherMap")
+  )) {
+    openWeatherMapApiKeySection = getOpenWeatherMapApiKeySection;
+  }
+
   return (
     <Page>
-      <Select
-        label="Theme"
-        settingsKey="theme"
-        title={<Text bold align="center">Theme</Text>}
-        options={[
-           {
-             name: "Black on White",
-             value: {
-               background: "white",
-               foreground: "black"
-             }
-           },
-           {
-             name: "White on Black",
-             value: {
-               background: "black",
-               foreground: "white"
-             }
-           }]
-        }
-      />
-      <Select
-        id="weather_provider"
-        label="Weather Provider"
-        settingsKey="weather_provider"
-        title={<Text bold align="center">Weather Provider</Text>}
-        options={[
-           {
-             name: "OpenWeatherMap",
-             value: "openweathermap"
-           },
-           {
-             name: "Yahoo Weather",
-             value: "yahooweather"
-           }]
-        }
-        onSelection={value => checkLocation(false, value, props)}
-      />
-      <Select
-        label="Temperature Scale"
-        settingsKey="temperature_scale"
-        title={<Text bold align="center">Temperature Scale</Text>}
-        options={[
-           {
-             name: "Metric",
-             value: "c"
-           },
-           {
-             name: "Imperial",
-             value: "f"
-           }]
-        }
-      />
-      
-      <Section
-        settingsKey="location_found2"
-        title={<Text bold align="center">Custom Location</Text>}
-        description="Enter a city name. If field is empty, then will be used your current location."
-      >
-        <TextInput
-          id="geolocation"
-          label="Enter Location"
-          placeholder="London"
-          settingsKey="custom_location"
-          onChange={value => checkLocation(value, false, props)}
-        />
-        <TextInput
-          settingsKey="location_found"
-          disabled="true"
-        />
-      </Section>
-      
-      <Section
-        title={<Text bold align="center">Battery Charge</Text>}
-      >
-        <Toggle
-          label="Always Show Battery Charge"
-          settingsKey="battery_show"
-        />
-      </Section>
-      
-      <Section
-        title={<Text bold align="center">Contact Me</Text>}>
-        <Text>
-          Please don't hesitate to contact me with any questions or suggestions. This app will always be free. If you really like my app please consider buying me a coffee. Thanks!
-        </Text>
-        <Link source="https://rawgit.com/trasigor/Sketchy-App-for-FitBit/master/settings/email.html">
-          <TextImageRow
-            label="Email"
-            sublabel="trasigor@gmail.com"
-            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Email.png?raw=true"
-          />
-        </Link>
-        <Link source="https://github.com/trasigor">
-          <TextImageRow
-            label="Github"
-            sublabel="https://github.com/trasigor"
-            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Github.png?raw=true"
-          />
-        </Link>
-        <Link source="https://paypal.me/Trasigor">
-          <TextImageRow
-            label="PayPal"
-            sublabel="funnel.from.trua@gmail.com"
-            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Paypal.png?raw=true"
-          />
-        </Link>
-        <Link source="https://www.blockchain.com/btc/payment_request?address=1PTcdcPLWzBD9KM7hmq82BXgKtuSuampPd">
-          <TextImageRow
-            label="Bitcoin"
-            sublabel="1PTcdcPLWzBD9KM7hmq82BXgKtuSuampPd"
-            icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Bitcoin.png?raw=true"
-          />
-        </Link>
-      </Section>
+      {getThemeSection()}
+      {getWeatherProviderSection(props)}
+      {openWeatherMapApiKeySection(props)}
+      {getTemperatureScaleSection()}
+      {getCustomLocationSection(props)}
+      {getBatteryChargeSection()}
+      {getContactMeSection()}
     </Page>
   );
 }
 
-registerSettingsPage(mySettings);
+function getThemeSection() {
+  return (
+    <Select
+      label="Theme"
+      settingsKey="theme"
+      title={<Text bold align="center">Theme</Text>}
+      options={[
+         {
+           name: "Black on White",
+           value: {
+             background: "white",
+             foreground: "black"
+           }
+         },
+         {
+           name: "White on Black",
+           value: {
+             background: "black",
+             foreground: "white"
+           }
+         }]
+      }
+    />
+  );
+}
+
+function getWeatherProviderSection(props) {
+  return (
+    <Select
+      id="weather_provider"
+      label="Weather Provider"
+      settingsKey="weather_provider"
+      title={<Text bold align="center">Weather Provider</Text>}
+      options={weatherProviders}
+      onSelection={value => checkLocation(false, value, false, props)}
+    />
+  );
+}
+
+function getOpenWeatherMapApiKeySection(props) {
+  return (
+    <TextInput
+      label="API Key (optional)"
+      settingsKey="api_key_openweathermap"
+      onChange={value => checkLocation(false, false, value, props)}
+    />
+  );
+}
+
+function getTemperatureScaleSection() {
+  return (
+    <Select
+      label="Temperature Scale"
+      settingsKey="temperature_scale"
+      title={<Text bold align="center">Temperature Scale</Text>}
+      options={[
+         {
+           name: "Metric",
+           value: "c"
+         },
+         {
+           name: "Imperial",
+           value: "f"
+         }]
+      }
+    />
+  );
+}
+
+function getCustomLocationSection(props) {
+  return (
+    <Section
+      settingsKey="location_found2"
+      title={<Text bold align="center">Custom Location</Text>}
+      description="Enter a city name. If field is empty, then will be used your current location."
+    >
+      <TextInput
+        id="geolocation"
+        label="Enter Location"
+        placeholder="London"
+        settingsKey="custom_location"
+        onChange={value => checkLocation(value, false, false, props)}
+      />
+      <TextInput
+        settingsKey="location_found"
+        disabled="true"
+      />
+    </Section>
+  );
+}
+
+function getBatteryChargeSection() {
+  return (
+    <Section
+      title={<Text bold align="center">Battery Charge</Text>}
+    >
+      <Toggle
+        label="Always Show Battery Charge"
+        settingsKey="battery_show"
+      />
+    </Section>
+  );
+}
+
+function getContactMeSection() {
+  return (
+    <Section
+      title={<Text bold align="center">Contact Me</Text>}>
+      <Text>
+        Please don't hesitate to contact me with any questions or suggestions. This app will always be free. If you really like my app please consider buying me a coffee. Thanks!
+      </Text>
+      <Link source="https://rawgit.com/trasigor/Sketchy-App-for-FitBit/master/settings/email.html">
+        <TextImageRow
+          label="Email"
+          sublabel="trasigor@gmail.com"
+          icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Email.png?raw=true"
+        />
+      </Link>
+      <Link source="https://github.com/trasigor">
+        <TextImageRow
+          label="Github"
+          sublabel="https://github.com/trasigor"
+          icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Github.png?raw=true"
+        />
+      </Link>
+      <Link source="https://paypal.me/Trasigor">
+        <TextImageRow
+          label="PayPal"
+          sublabel="funnel.from.trua@gmail.com"
+          icon="https://github.com/trasigor/Sketchy-App-for-FitBit/blob/master/resources/images/settings/Paypal.png?raw=true"
+        />
+      </Link>
+    </Section>
+  );
+}
+
+getWeatherProviders().then(function(weatherProvidersLoaded) {
+  weatherProviders = weatherProvidersLoaded;
+}).then(function() {
+  registerSettingsPage(settings);
+}).catch(function(error) {
+  console.log('settings error')
+});

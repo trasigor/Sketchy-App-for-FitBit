@@ -3,26 +3,7 @@ import { settingsStorage } from "settings";
 export function OpenWeatherMapAPI(){};
 
 OpenWeatherMapAPI.prototype.getData = function(pos) {
-  if (getApiKey() && "null" !== getApiKey() && '' !== getApiKey()) {
-    return getWeather(pos);
-  }
-  else {
-    return new Promise(function(resolve, reject) {
-      let url = "https://pebble.itigor.com/sketchy-weather/tools.php?get_openweathermap_apikey";
-      fetch(url).then(function(response) {
-        return response.json();
-      }).then(function(json) {
-        if (json.apikey) {
-          settingsStorage.setItem("openweathermap_api_key", json.apikey);
-        }
-        return pos;
-      }).then(function(pos) {
-        resolve(getWeather(pos));
-      }).catch(function(error) {
-        reject(error);
-      });
-    });
-  }
+  return getWeather(pos);
 }
 
 function getWeather(pos) {
@@ -52,38 +33,33 @@ function getWeather(pos) {
     urlCurrent += '&APPID='+getApiKey();
   }
 
-  return new Promise(function(resolve, reject) {
-    // Send request to OpenWeatherMap
-    fetch(urlCurrent).then(function(response) {
-      return response.json();
-    }).then(function(json) {
-      if (parseInt(json.cod) == 429) {
-        // temporary blocked due to exceeding of requests limitation
-        settingsStorage.setItem("openweathermap_api_key", null);
-        resolve({key: "weather", error: json.cod, message: json.message});
-      }
-      else if (parseInt(json.cod) == 404) {
-        console.log(new Date() + " - Error response from openweathermap weather server. One more try.");
-        resolve({key: "weather", error: json.cod, message: json.message});
-      }
-      else {
-        // Conditions
-        let weather_image = getWeatherImage(json.weather[0].icon, json.weather[0].id);
+  // Send request to OpenWeatherMap
+  return fetch(urlCurrent).then(function(response) {
+    return response.json();
+  }).then(function(json) {
+    if (parseInt(json.cod) === 200) {
+      // Conditions
+      let weather_image = getWeatherImage(json.weather[0].icon, json.weather[0].id);
 
-        // Assemble dictionary using our keys
-        let dictionary = {
-          "key": "weather",
-          "temperature": Math.round(json.main.temp),
-          "humidity": Math.round(json.main.humidity),
-          "scale": scale,
-          "weather_image": weather_image
-        };
-        
-        resolve(dictionary);
-      }
-    }).catch(function(error) {
-      reject(error);
-    });
+      // Assemble dictionary using our keys
+      let dictionary = {
+        "key": "weather",
+        "temperature": Math.round(json.main.temp),
+        "humidity": Math.round(json.main.humidity),
+        "scale": scale,
+        "weather_image": weather_image
+      };
+
+      return dictionary;
+    }
+    else {
+      console.log(new Date() + " - Error response from openweathermap weather server. One more try.");
+      return {
+        key: "weather",
+        error: json.cod,
+        message: json.message
+      };
+    }
   });
 }
 
@@ -133,6 +109,6 @@ function getWeatherImage(icon, code) {
   return weather_image;
 }
 
-function getApiKey() {
-  return settingsStorage.getItem("openweathermap_api_key");
+export function getApiKey() {
+  return settingsStorage.getItem("api_key_openweathermap") ? JSON.parse(settingsStorage.getItem("api_key_openweathermap")).name : null;
 }

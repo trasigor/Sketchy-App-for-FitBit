@@ -3,8 +3,8 @@ import { settingsStorage } from "settings";
 import * as messaging from "messaging";
 import { geolocation } from "geolocation";
 
-import { OpenWeatherMapAPI } from "./openweathermap.js"
-import { YahooWeatherAPI } from "./yahooweather.js"
+import { OpenWeatherMapAPI, getApiKey as getOpenWeatherMapApiKey } from "./openweathermap.js"
+import { WeatherAPI } from "./weather.js"
 
 let timeoutId = false;
 
@@ -93,9 +93,9 @@ function getWeather() {
 
 function getWeatherData(coords) {
   let weather_provider = JSON.parse(settingsStorage.getItem("weather_provider"));
-  let weatherAPI = new OpenWeatherMapAPI();
-  if (weather_provider && weather_provider.values[0].value && !weather_provider.values[0].value.localeCompare("yahooweather")) {
-    weatherAPI = new YahooWeatherAPI();
+  let weatherAPI = new WeatherAPI();
+  if (weather_provider && weather_provider.values[0].value && !weather_provider.values[0].value.localeCompare("OpenWeatherMap") && getOpenWeatherMapApiKey()) {
+    weatherAPI = new OpenWeatherMapAPI();
   }
 
   weatherAPI.getData(coords).then(function(dictionary) {

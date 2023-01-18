@@ -1,5 +1,9 @@
 {
+  "devDependencies": {
+    "@fitbit/sdk": "~4.3.0"
+  },
   "fitbit": {
+    "appUUID": "764e3aeb-dbca-4192-8ebc-13db94b18319",
     "appType": "clockface",
     "appDisplayName": "Sketchy",
     "iconFile": "resources/icon.png",
@@ -18,13 +22,10 @@
       "gemini"
     ],
     "i18n": {
-      "en": {
+      "en-US": {
         "name": "Sketchy"
       }
     },
     "defaultLanguage": "en-US"
-  },
-  "devDependencies": {
-    "@fitbit/sdk": "~4.1.0"
   }
 }
